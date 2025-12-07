@@ -1,0 +1,141 @@
+\documentclass{beamer}
+\usetheme{metropolis}
+\usepackage{graphicx} % Required for inserting images
+\usepackage{amsmath} % Required for inserting images
+\usepackage{braket}
+\usepackage{xcolor}
+\usepackage{quantikz}
+\usepackage{amssymb} % For \iff
+
+\newcommand{\X}{\begin{bmatrix}0 & 1 \\ 1 & 0\end{bmatrix}}
+\newcommand{\Y}{\begin{bmatrix}0 & -i \\ i & 0\end{bmatrix}}
+\newcommand{\Z}{\begin{bmatrix}1 & 0 \\ 0 & -1\end{bmatrix}}
+\newcommand{\Har}{
+    \genfrac{}{}{}{0}{1}{\sqrt{2}}
+    \begin{bmatrix}1 & 1 \\ 1 & -1\end{bmatrix}
+}
+\newcommand{\ketzero}{\ket{0}}
+\newcommand{\ketone}{\ket{1}}
+\newcommand{\matzero}{\begin{bmatrix}1 \\ 0\end{bmatrix}}
+\newcommand{\matone}{\begin{bmatrix}0 \\ 1\end{bmatrix}}
+
+\title{Trapped Ion Quantum Computing}
+\author{David Skocic}
+\date{December 9 2025}
+
+\begin{document}
+
+\maketitle
+\section{Basics of Quantum Computing}
+\begin{frame}{Qubits}
+	\begin{itemize}
+		\item Analog to the classical bit (\textcolor{red}{Qu}\textcolor{blue}{bit} = \textcolor{red}{Qu}antum \textcolor{blue}{bit})
+		\item Any two-state quantum system can theoretically be a qubit
+		\item We use our familiar Dirac notation to represent states
+	\end{itemize}
+	\begin{center}
+		$\ketzero = \matzero$
+		and
+		$\ketone = \matone$
+	\end{center}
+
+	\begin{itemize}
+		\item Qubits can have a superposition unlike a classical bit
+	\end{itemize}
+	\begin{center}
+		$\begin{bmatrix}\alpha \\ \beta\end{bmatrix} = \alpha\ketzero + \beta\ketone$
+	\end{center}
+\end{frame}
+\begin{frame}{Electron Spin}
+	\begin{itemize}
+		\item Spin is a familiar two-state quantum system
+		\item Recall our spin operators for the different directions
+	\end{itemize}
+	\begin{center}
+		$S_x = \genfrac{}{}{}{0}{\hbar}{2}\X$
+		\hspace{20pt}
+		$S_y = \genfrac{}{}{}{0}{\hbar}{2}\Y$
+		\hspace{20pt}
+		$S_z = \genfrac{}{}{}{0}{\hbar}{2}\Z$
+	\end{center}
+\end{frame}
+
+\begin{frame}{Unitary Operators}
+	\begin{itemize}
+		\item The evolution of a quantum system is described by unitary operators
+	\end{itemize}
+	\begin{center}
+		$\ket{\psi_t} = U(t,t_0)\ket{\psi_0}$
+	\end{center}
+	\begin{itemize}
+		\item Unitary Operators are \textit{mathematically reversible}:
+	\end{itemize}
+	\begin{center}
+		$UU^\dagger=I$
+	\end{center}
+	\begin{itemize}
+		\item You can apply unitary operators to a qubit to alter its state in a desirable manner
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Quantum Gates}
+	\begin{itemize}
+		\item In quantum computing, unitary operators are usually called \textbf{quantum gates}
+		\item Many of the basic quantum gates are look very familiar!
+	\end{itemize}
+	\begin{center}
+		$X = \X$
+		\hspace{20pt}
+		$Y = \Y$
+		\hspace{20pt}
+		$Z = \Z$
+	\end{center}
+	\begin{itemize}
+		\item There are also less familiar gates such as the \textit{Haramad} Gate:
+	\end{itemize}
+	\begin{center}
+		$H= \Har$
+	\end{center}
+\end{frame}
+\begin{frame}{Quantum Gates}
+	\begin{itemize}
+		\item The X gate is also called the NOT gate:
+	\end{itemize}
+	\begin{center}
+		$NOT\ketzero=\ketone$ and $NOT\ketone=\ketzero$
+		\\[12pt]
+		$\X
+			\begin{bmatrix}\alpha\\\beta\end{bmatrix} =
+			\begin{bmatrix}\beta\\\alpha\end{bmatrix}$
+	\end{center}
+	\begin{itemize}
+		\item The Haramad gate creates a superposition:
+	\end{itemize}
+	\begin{center}
+		$\Har\matzero =
+			\genfrac{}{}{}{0}{1}{\sqrt{2}}
+			\begin{bmatrix}1\\1\end{bmatrix}=
+			\genfrac{}{}{}{0}{1}{\sqrt{2}}
+			(\ketzero+\ketone)$
+	\end{center}
+\end{frame}
+\begin{frame}{Quantum Circuits}
+	\begin{itemize}
+		\item A series of quantum gates constitutes a \textbf{quantum circuit}
+		\item It is standard to represent these as if they were on a wire
+	\end{itemize}
+
+	\begin{center}
+		\begin{quantikz}
+			\ketzero & \gate{H} & \gate{Y} & \gate{Z} & \meter{}
+		\end{quantikz}
+		\\\rotatebox[origin=c]{90}{{$\iff$}}\\
+		$MZYH\ketzero=M\Z\Y\Har\matzero=\genfrac{}{}{}{0}{M}{\sqrt{2}}\begin{bmatrix}-i\\-i\end{bmatrix}$
+		\\[12pt] Where M represents the act of measurement
+	\end{center}
+\end{frame}
+\section{Trapping an Ion}
+\begin{frame}{Classical Ion Trapping}
+\end{frame}
+
+\end{document}
