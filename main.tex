@@ -4,9 +4,14 @@
 \usepackage{amsmath} % Required for inserting images
 \usepackage{braket}
 \usepackage{xcolor}
+\usepackage{soul}
 \usepackage{quantikz}
 \usepackage{amssymb} % For \iff
 
+\newcommand{\bigfrac}[2]{\genfrac{}{}{}{0}{#1}{#2}}
+\newcommand{\hlc}[2]{%
+    {\sethlcolor{#1}\hl{#2}}%
+}
 \newcommand{\X}{\begin{bmatrix}0 & 1 \\ 1 & 0\end{bmatrix}}
 \newcommand{\Y}{\begin{bmatrix}0 & -i \\ i & 0\end{bmatrix}}
 \newcommand{\Z}{\begin{bmatrix}1 & 0 \\ 0 & -1\end{bmatrix}}
@@ -16,8 +21,13 @@
 }
 \newcommand{\ketzero}{\ket{0}}
 \newcommand{\ketone}{\ket{1}}
+\newcommand{\brazero}{\bra{0}}
+\newcommand{\braone}{\bra{1}}
 \newcommand{\matzero}{\begin{bmatrix}1 \\ 0\end{bmatrix}}
 \newcommand{\matone}{\begin{bmatrix}0 \\ 1\end{bmatrix}}
+
+\usefonttheme{professionalfonts}
+% \everymath{\mathnormal}
 
 \title{Trapped Ion Quantum Computing}
 \author{David Skocic}
@@ -48,8 +58,8 @@
 \end{frame}
 \begin{frame}{Electron Spin}
 	\begin{itemize}
-		\item Spin is a familiar two-state quantum system
-		\item Recall our spin operators for the different directions
+		\item Electron spin is a familiar two-state quantum system
+		\item Recall our spin operators for the different dimensions
 	\end{itemize}
 	\begin{center}
 		$S_x = \genfrac{}{}{}{0}{\hbar}{2}\X$
@@ -57,6 +67,18 @@
 		$S_y = \genfrac{}{}{}{0}{\hbar}{2}\Y$
 		\hspace{20pt}
 		$S_z = \genfrac{}{}{}{0}{\hbar}{2}\Z$
+	\end{center}
+	\begin{itemize}
+		\item $\matzero$ = $\ketzero$ and $\matone$ = $\ketone$ are the z-basis eigenvectors
+		\item Observe how these basis vectors can map to the Pauli spin matrices
+	\end{itemize}
+	\begin{center}
+		$\ketzero\brazero + \ketone\braone = I$
+		\hspace{20pt}
+		$\ketzero\braone + \ketone\brazero = \sigma_x$ \\
+		$i(\ketzero\braone - \ketone\brazero) = \sigma_y$
+		\hspace{20pt}
+		$\ketone\braone - \ketzero\brazero= \sigma_z$
 	\end{center}
 \end{frame}
 
@@ -91,12 +113,13 @@
 		$Z = \Z$
 	\end{center}
 	\begin{itemize}
-		\item There are also less familiar gates such as the \textit{Haramad} Gate:
+		\item There are also less familiar gates such as the \textit{Hadamard} Gate:
 	\end{itemize}
 	\begin{center}
 		$H= \Har$
 	\end{center}
 \end{frame}
+
 \begin{frame}{Quantum Gates}
 	\begin{itemize}
 		\item The X gate is also called the NOT gate:
@@ -109,7 +132,7 @@
 			\begin{bmatrix}\beta\\\alpha\end{bmatrix}$
 	\end{center}
 	\begin{itemize}
-		\item The Haramad gate creates a superposition:
+		\item The Hadamard gate creates a superposition:
 	\end{itemize}
 	\begin{center}
 		$\Har\matzero =
@@ -130,12 +153,285 @@
 			\ketzero & \gate{H} & \gate{Y} & \gate{Z} & \meter{}
 		\end{quantikz}
 		\\\rotatebox[origin=c]{90}{{$\iff$}}\\
-		$MZYH\ketzero=M\Z\Y\Har\matzero=\genfrac{}{}{}{0}{M}{\sqrt{2}}\begin{bmatrix}-i\\-i\end{bmatrix}$
-		\\[12pt] Where M represents the act of measurement
+		$ZYH\ketzero=\Z\Y\Har\matzero=\genfrac{}{}{}{0}{1}{\sqrt{2}}\begin{bmatrix}-i\\-i\end{bmatrix}$
 	\end{center}
 \end{frame}
-\section{Trapping an Ion}
+
+\section{Basics of Trapped Ion Quantum Systems}
+
+\begin{frame}{Why Use Trapped Ions?}
+	\begin{itemize}
+		\item Qubits need to be isolated from the rest of the universe
+		\item An ion is much easier to manipulate than a neutral atom
+		\item They have exceptionally long coherence times
+		\item Quantum gates have been implemented with exceptional fidelity
+		\item Quantum states are easy to prepare and measure
+		\item The physics behind them is well understood and relatively simple
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Encoding a Trapped Ion with a Qubit}
+	Take any two long-lived states of different energies $\ket{g}$ and $\ket{e}$\\[4pt]
+	Just like spin, these states can map to the Pauli spin matrices:
+	\begin{center}
+		$\ket{g}\bra{g} + \ket{e}\bra{e} = I$
+		\hspace{20pt}
+		$\ket{g}\bra{e} + \ket{e}\bra{g} = \sigma_x$ \\
+		$i(\ket{g}\bra{e} - \ket{e}\bra{g}) = \sigma_y$
+		\hspace{20pt}
+		$\ket{e}\bra{e} - \ket{g}\bra{g} = \sigma_z$
+	\end{center}
+	We can think of $\ket{g}$ as $\ketzero$ and $\ket{e}$ as $\ketone$\\[4pt]
+	The two-level Hamiltonian is represented by
+	\[
+		\hat{H} = \hbar (\omega_g\ket{g}\bra{g}+\omega_e\ket{e}\bra{e}) \rightarrow
+		\hat{H} = \hbar\bigfrac{\omega_0}{2}\sigma_z
+	\]
+\end{frame}
+
+\begin{frame}{Measuring a Qubit}
+	\begin{itemize}
+		\item Detection of states involves photon scattering\\[4pt]
+		\item States are carefully chosen so one "bright" state scatters incoming photons while the other has no effect\\[4pt]
+		\item The trajectories of the photons are detected, making is easy to tell which qubits scattered the photons
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{What Ions Make Good Qubits?}
+	\begin{itemize}
+		\item There are a few features that are desirable in an ion:
+		      \begin{itemize}
+			      \item Hydrogen-like atomic structure
+			            \vspace{6pt}
+			      \item Singly ionized species
+			            \vspace{6pt}
+			      \item Metastable states in the visible spectrum
+		      \end{itemize}
+		\item This makes heavier alkali earth metals a common choice
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Rabi Frequencies}
+	The Rabi frequency comes up when a two-state system is placed in an electric field\\[4pt]
+	This frequency is the rate at which the the system 'flops' between states\\[4pt]
+	Rabi frequencies are a way to measure the strength of the coupling of the states and the field applied defined by\\[4pt]
+	\[\Omega = -\frac{\bra{e}\vec{\mu} \cdot \vec{\epsilon}\hspace{2pt}E_0\ket{g}}{\hbar} \]
+\end{frame}
+
+\section{Classical Ion Trapping}
+
 \begin{frame}{Classical Ion Trapping}
+	\begin{itemize}
+		\item Static electric fields cannot trap an ion
+		      \begin{itemize}
+			      \item Gauss's law $\nabla \cdot E = 0 \rightarrow$  electric potential has no local minima
+			      \item This is overcome by varying the electric field with time
+		      \end{itemize}
+		\item These traps typically have potentials oscillating in the radio frequency range
+		\item Construct a trap with a time-varying and time-independent part:
+	\end{itemize}
+	\[
+		V(x,y,z,t) = U\frac{1}{2}(\alpha x^2 + \beta y^2 + \gamma z^2) +
+		\skew{4}\tilde{U}\cos(\omega_{rf}t)\frac{1}{2}(\alpha' x^2 + \beta' y^2 + \gamma' z^2)
+	\]
+\end{frame}
+
+\begin{frame}{Classical Ion Trapping}
+	\begin{center}
+		\small
+		\[
+			V(x,y,z,t) = U\frac{1}{2}(\alpha x^2 + \beta y^2 + \gamma z^2) +
+			\skew{4}\tilde{U}\cos(\omega_{rf}t)\frac{1}{2}(\alpha' x^2 + \beta' y^2 + \gamma' z^2)
+		\]
+	\end{center}
+	Laplace's Equation ($\nabla^2 V = 0$) says:
+	\begin{center}
+		$\alpha+\beta+\gamma= 0$ \\
+		$\alpha'+\beta'+\gamma' = 0$
+	\end{center}
+	Which is underconstrained -- there are many ways to place electrodes
+\end{frame}
+
+\begin{frame}{Classical Ion Trapping}
+	FILL IN WITH EXAMPLE TRAP WITH PARAMS AND IMAGE
+	This is a Linear Paul Trap, with
+	\begin{center}
+		$-(\alpha + \beta) = \gamma$\\
+		$\alpha'=-\beta'$
+	\end{center}
+\end{frame}
+\begin{frame}{Classical Ion Trapping}
+	\begin{itemize}
+		\item The problem can be one dimensionalized:
+	\end{itemize}
+	\begin{center}
+		$\ddot{x}=-\bigfrac{Ze}{m}\bigfrac{\partial V}{\partial x} = -\bigfrac{Ze}{m}\lbrack U\alpha + \tilde{U}\cos(\omega_{rf}t)\alpha'\rbrack x $
+	\end{center}
+	\begin{itemize}
+		\item And transformed into a Mathieu differential equation:
+	\end{itemize}
+	\begin{center}
+		$\bigfrac{d^2x}{d\xi^2} + \lbrack a_x - 2q_x\cos(2\xi)\rbrack x = 0$
+	\end{center}
+	with
+	\begin{center}
+		$\xi=\bigfrac{\omega_{rf}t}{2}$,
+		\hspace{6pt}
+		$a_x=\bigfrac{4ZeU\alpha}{m\omega_{rf}^2}$,
+		\hspace{6pt}
+		$q_x=\bigfrac{2Ze\tilde{U}\alpha'}{m\omega_{rf}^2}$
+	\end{center}
+\end{frame}
+
+\begin{frame}{Classical Ion Trapping}
+	Mathieu differential equations have solution\\
+	\[x(\xi) = Ae^{i\beta_x\xi}\sum_{n=-\infty}^{\infty} C_{2n}e^{i2n\xi} +
+		B^{-i\beta_x\xi}\sum_{n=-\infty}^{\infty} C_{2n}e^{-i2n\xi}\]\\
+	where  $\beta_x$ and $C_{2n}$ are functions of $a_x$ and $q_x$.\\[8pt]
+	Assuming $|a_x|, q_x^2 \ll 1$, $\beta\approx\sqrt{a_x+\frac{q_x^2}{2}}$, and (to first order):
+	\[
+		x(t)\propto
+		\colorbox{cyan}{$\cos(\beta_x\frac{\omega_{rf}}{2}t)$}
+		\colorbox{lime}{$\lbrack 1-\frac{q_x}{2}\cos(\omega_{rf}t) \rbrack$}
+	\]
+\end{frame}
+
+\section{Quantum Ion Trapping}
+
+\begin{frame}{Quantum Ion Trapping}
+	Begin with our same potential, but rewrite it:
+	\begin{center}
+		$V(t)=\bigfrac{m}{2}W(t)\hat{x}^2$
+		\hspace{4pt}
+		with
+		\hspace{4pt}
+		$W(t)=\bigfrac{\omega_{rf}^2}{4}\lbrack a_x-2q_x\cos(\omega_{rf}t) \rbrack$
+	\end{center}
+	This looks familiar! We already know the solutions to
+	\begin{center}
+		$V(x)=\bigfrac{1}{2}m\omega x^2$
+	\end{center}
+	Maybe there are some raising and lowering operators...
+\end{frame}
+
+\begin{frame}{Quantum Ion Trapping}
+	Our Hamiltonian of motion can be written,
+	\[\hat{H}^{(m)} = \bigfrac{\hat{p}^2}{2m} + \bigfrac{m}{2}W(t)\hat{x}^2\]
+	First, we can write the operators in the Heisenberg picture:
+	\begin{center}
+		$\dot{\hat{x}}_H = \bigfrac{1}{i\hbar}\lbrack \hat{x},\hat{H}^{(m)}\rbrack = \bigfrac{\hat{p}}{m}$ \\[4pt]
+		$\dot{\hat{p}}_H = \bigfrac{1}{i\hbar}\lbrack \hat{p},\hat{H}^{(m)}\rbrack = -mW(t)\hat{x}$
+	\end{center}
+	which combine into a Mattheiu equation!
+	\[\ddot{\hat{x}}_H+W(t)\hat{x}_H = 0\]
+	\[\ddot{\hat{x}}_H+ \bigfrac{\omega_{rf}^2}{4}\lbrack a_x-2q_x\cos(\omega_{rf}t) \rbrack \hat{x}_H = 0\]
+
+\end{frame}
+
+\begin{frame}{Quantum Ion Trapping}
+	Consider some other $u(t)$ that satisfies the same equation:
+	\[\ddot{u(t)}+W(t)\hat{u(t)} = 0\]
+	with boundary conditions
+	$
+		u(0) = 1,
+		\hspace{6pt}
+		\dot{u}(0) = iv
+	$\\[6pt]
+	from before, with $A=0$ and $B=1$
+	\[u(t) = e^{i\beta_x\omega_{rf}/2} \sum_{n=-\infty}^\infty C_{2n}e^{in\omega_{rf}t} \equiv e^{i\beta_x\omega_{rf}/2} \Phi(t) \]
+	And applying the boundary conditions,
+	\[
+		u(0)=\sum_{n=-\infty}^\infty C_{2n} = 1,
+		\hspace{6pt}
+		v=\omega_{rf} \sum_{n=-\infty}^\infty C_{2n}(\beta_x/2 + n)
+	\]
+\end{frame}
+\begin{frame}{Quantum Ion Trapping}
+	Since $u(t)$ and $\hat{x}$ satisfy the same differential equation, so
+	\[\hat{C}(t)=\sqrt{\bigfrac{m}{2\hbar v}}i\lbrack u(t)\dot{\hat{x}} - \dot{u}(t)\hat{x} \rbrack\]
+	is proportional to their Wronskian identity, and is constant in time
+	\[\hat{C}(t)=\hat{C}(0)=\bigfrac{1}{\sqrt{2m\hbar v}}(mv\hat{x}(0) + i\hat{p}(0)) = \hat{a}\]
+	We have recovered exactly the lowering operator!
+\end{frame}
+
+\begin{frame}{Quantum Ion Trapping}
+	Using this relation, we can write our operators in terms of $\hat{a}$ and $\hat{a}^\dagger$:
+	\[\hat{x}(t) = \sqrt{\bigfrac{\hbar}{2mv}} \lbrack\hat{a}u^*(t) + \hat{a}^\dagger u(t)\rbrack \]
+	\[\hat{p}(t) = \sqrt{\bigfrac{\hbar m}{2v}} \lbrack\hat{a}\dot{u}^*(t) + \hat{a}^\dagger \dot{u}(t)\rbrack \]
+	And just like we're used to, we have a state $\ket{n=0}_v$ such that
+	\[ \hat{a}\ket{n=0}_v = 0 \]
+	In the Schr\"odinger picture ($\hat{U}(t)=e^{-(i/\hbar) \hat{H}^{(m)}}$):
+	\[\hat{C}_S(t)\hat{U}(t)\ket{n=0} = \hat{C}_S(t)\ket{n=0,t}=0\]
+\end{frame}
+\begin{frame}{Quantum Ion Trapping}
+	These states form a complete orthonormal basis via the creation operator:
+	\[\ket{n,t}=\bigfrac{\lbrack \hat{C}_S^\dagger(t) \rbrack^n}{\sqrt{n!}}\ket{n=0,t}\]
+	write ground state lowest order approx
+\end{frame}
+
+
+\section{Quantum Gate Implementation}
+
+\begin{frame}{Rotation Gates}
+	We use lasers to change states\\[4pt]
+	The total Hamiltonian can be written as a sum of the ion's internal electron state, its motional state, and the interaction with the laser:
+	\[\hat{H} = \hat{H}_E + \hat{H}_M + \hat{H}_L\]
+	The laser Hamiltonian is defined by  $\Omega$, $\omega$, $k$, and $\phi$
+	\[\hat{H}_L=\bigfrac{\hbar\Omega}{2}(\hat{\sigma}^+ + \hat{\sigma}^-)\lbrack e^{i(k\hat{x}-\omega t + \phi)} + e^{-i(k\hat{x}-\omega t + \phi)} \rbrack \]
+\end{frame}
+
+\begin{frame}{Rotation Gates}
+	But this problem is much easier in the \textit{interaction picture}\\[4pt]
+	Let $\hat{H}_0 = \hat{H}_E + \hat{H}_M$ and $\hat{U}_0 = e^{-(i/\hbar)\hat{H}_0t}$, so
+	\[\hat{H}_{int} = \hat{U}_0^\dagger\hat{H}_L\hat{U}_0.\]
+	After plugging in and much simplification and approximation
+	\[
+		\hat{H}_{int}(t) = \frac{\hbar\Omega}{2}
+		\lbrack
+		e^{i\eta(\hat{a}^\dagger e^{ivt} + \hat{a} e^{-ivt})}
+		\hat{\sigma}^+
+		e^{-i(\textcolor{blue}{(\omega-\omega_0)}t-\phi)}
+		+ h.c.
+		\rbrack
+	\]
+	We get resonance when $\omega-\omega_0$ is small and the $\phi$ term dominates
+\end{frame}
+
+\begin{frame}{Rotation Gates}
+	When the phase term dominates:
+	\[
+		\hat{H}_{int} = \frac{\hbar\Omega}{2}(\hat{\sigma}^+ e^{i\phi} + \hat{\sigma}^- e^{-i\phi})
+		\equiv
+		\frac{\hbar\Omega}{2}\hat{\sigma}_\phi
+	\]
+	And this Hamiltonian describes rotation gates!\\[4pt]
+	Let's put this back into the Schr\"odinger equation:
+	\[
+		\frac{d}{dt}\ket{\psi(t)} = -\frac{i}{\hbar}\Hat{H}\ket{\psi(t)}
+		\rightarrow
+		\ket{\psi(t)}=e^{-\frac{i\Omega}{2}t\hat{\sigma}_\phi}\ket{\psi(0)}
+		\equiv
+		\hat{U}(t)\ket{\psi(0)}
+	\]
+	So we have a unitary operator evolving the system...
+\end{frame}
+
+\begin{frame}{Rotation Gates}
+	Letting $\Omega t \equiv \theta$:
+	\begin{multline*}
+		\hat{U}(t) =
+		\sum_{k=0}^\infty \frac{1}{k!}(-i\frac{\theta}{2}\hat{\sigma}_\phi)^k =\\
+		I\sum_{k=0}^\infty  \frac{(-1)^k}{(2k)!}\left(\frac{\theta}{2}\right)^{2k} -
+		i\hat{\sigma}_\phi \sum_{k=0}^\infty \frac{(-1)^k}{(2k+1)!}\left(\frac{\theta}{2}\right)^{2k+1}=\\
+		I\cos\left(\frac{\theta}{2}\right) -
+		i\hat{\sigma}_\phi\sin\left(\frac{\theta}{2}\right) =
+		\begin{pmatrix}
+			\cos\frac{\theta}{2}            & -i\sin\frac{\theta}{2}e^{-i\phi} \\
+			-i\sin\frac{\theta}{2}e^{i\phi} & \cos\frac{\theta}{2}
+		\end{pmatrix}
+	\end{multline*}
+	We recover the $X$, $Y$, and $Z$ gates with the right choices of $\theta$ and $\phi$!!
+
 \end{frame}
 
 \end{document}
