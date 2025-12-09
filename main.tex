@@ -7,6 +7,10 @@
 \usepackage{soul}
 \usepackage{quantikz}
 \usepackage{amssymb} % For \iff
+\usepackage{caption}
+\usepackage[backend=bibtex,style=authoryear]{biblatex}
+
+\addbibresource{./resources/references.bib}
 
 \newcommand{\bigfrac}[2]{\genfrac{}{}{}{0}{#1}{#2}}
 \newcommand{\hlc}[2]{%
@@ -252,9 +256,11 @@
 	Which is underconstrained -- there are many ways to place electrodes
 \end{frame}
 
-\begin{frame}{Classical Ion Trapping}
-	FILL IN WITH EXAMPLE TRAP WITH PARAMS AND IMAGE
-	This is a Linear Paul Trap, with
+\begin{frame}{Linear Paul Trap}
+	\begin{figure}
+		\includegraphics[width=0.45\textwidth]{./resources/Screenshot 2025-12-09 at 4.44.50 AM.png} % Adjust width as needed
+		\caption*{\tiny{A Linear Paul Trap from \cite{Leibfried2003-aq}}}
+	\end{figure}
 	\begin{center}
 		$-(\alpha + \beta) = \gamma$\\
 		$\alpha'=-\beta'$
@@ -262,7 +268,7 @@
 \end{frame}
 \begin{frame}{Classical Ion Trapping}
 	\begin{itemize}
-		\item The problem can be one dimensionalized:
+		\item The problem can be one-dimensionalized:
 	\end{itemize}
 	\begin{center}
 		$\ddot{x}=-\bigfrac{Ze}{m}\bigfrac{\partial V}{\partial x} = -\bigfrac{Ze}{m}\lbrack U\alpha + \tilde{U}\cos(\omega_{rf}t)\alpha'\rbrack x $
@@ -319,27 +325,27 @@
 	\[\hat{H}^{(m)} = \bigfrac{\hat{p}^2}{2m} + \bigfrac{m}{2}W(t)\hat{x}^2\]
 	First, we can write the operators in the Heisenberg picture:
 	\begin{center}
-		$\dot{\hat{x}}_H = \bigfrac{1}{i\hbar}\lbrack \hat{x},\hat{H}^{(m)}\rbrack = \bigfrac{\hat{p}}{m}$ \\[4pt]
-		$\dot{\hat{p}}_H = \bigfrac{1}{i\hbar}\lbrack \hat{p},\hat{H}^{(m)}\rbrack = -mW(t)\hat{x}$
+		$\dot{\hat{x}} = \bigfrac{1}{i\hbar}\lbrack \hat{x},\hat{H}^{(m)}\rbrack = \bigfrac{\hat{p}}{m}$ \\[4pt]
+		$\dot{\hat{p}} = \bigfrac{1}{i\hbar}\lbrack \hat{p},\hat{H}^{(m)}\rbrack = -mW(t)\hat{x}$
 	\end{center}
 	which combine into a Mattheiu equation!
-	\[\ddot{\hat{x}}_H+W(t)\hat{x}_H = 0\]
-	\[\ddot{\hat{x}}_H+ \bigfrac{\omega_{rf}^2}{4}\lbrack a_x-2q_x\cos(\omega_{rf}t) \rbrack \hat{x}_H = 0\]
+	\[\ddot{\hat{x}}+W(t)\hat{x} = 0\]
+	\[\ddot{\hat{x}}+ \bigfrac{\omega_{rf}^2}{4}\lbrack a_x-2q_x\cos(\omega_{rf}t) \rbrack \hat{x} = 0\]
 
 \end{frame}
 
 \begin{frame}{Quantum Ion Trapping}
 	Consider some other $u(t)$ that satisfies the same equation:
-	\[\ddot{u(t)}+W(t)\hat{u(t)} = 0\]
+	\[\ddot{u}(t)+W(t)\hat{u}(t) = 0\]
 	with boundary conditions
 	$
 		u(0) = 1,
 		\hspace{6pt}
 		\dot{u}(0) = iv
 	$\\[6pt]
-	from before, with $A=0$ and $B=1$
+	From before, with $A=0$ and $B=1$
 	\[u(t) = e^{i\beta_x\omega_{rf}/2} \sum_{n=-\infty}^\infty C_{2n}e^{in\omega_{rf}t} \equiv e^{i\beta_x\omega_{rf}/2} \Phi(t) \]
-	And applying the boundary conditions,
+	Applying the boundary conditions,
 	\[
 		u(0)=\sum_{n=-\infty}^\infty C_{2n} = 1,
 		\hspace{6pt}
@@ -361,12 +367,20 @@
 	And just like we're used to, we have a state $\ket{n=0}_v$ such that
 	\[ \hat{a}\ket{n=0}_v = 0 \]
 	In the Schr\"odinger picture ($\hat{U}(t)=e^{-(i/\hbar) \hat{H}^{(m)}}$):
-	\[\hat{C}_S(t)\hat{U}(t)\ket{n=0} = \hat{C}_S(t)\ket{n=0,t}=0\]
+	\[\hat{C}_S(t)\hat{U}(t)\ket{n=0}_v = \hat{C}_S(t)\ket{n=0,t}=0\]
 \end{frame}
 \begin{frame}{Quantum Ion Trapping}
 	These states form a complete orthonormal basis via the creation operator:
 	\[\ket{n,t}=\bigfrac{\lbrack \hat{C}_S^\dagger(t) \rbrack^n}{\sqrt{n!}}\ket{n=0,t}\]
-	write ground state lowest order approx
+	Excluding a phase factor, the ground state is approximately
+	\begin{multline*}
+		\chi_0(t)=
+		\left(\frac{mv}{\pi\hbar}\right)^{1/4}
+		\sqrt{\frac{1+q_x/2}{1+(q_x/2)\cos(\omega_{rf}t)}}\\
+		\times
+		exp \left( \left\lbrack i\frac{m\omega_{rf}\sin(\omega_{rf}t)}{2\hbar\lbrack 2/q_x + \cos(\omega_{rf}t)]} - \frac{mv}{2\hbar} \right\rbrack x^2\right)
+	\end{multline*}
+	If $\omega_{rf}=0$, the solution is exactly the harmonic oscillator.
 \end{frame}
 
 
@@ -432,6 +446,32 @@
 	\end{multline*}
 	We recover the $X$, $Y$, and $Z$ gates with the right choices of $\theta$ and $\phi$!!
 
+\end{frame}
+
+\section{Conclusion}
+
+\begin{frame}{Conclusion}
+	\begin{itemize}
+
+		\item Trapped ion systems have incredible physics and we barely scratched the surface:
+		      \begin{itemize}
+			      \item There are many more gates that have been implemented, including the Hadamard gate and other multi-qubit gates
+			      \item This presentation only talked about single ion systems, but many ions can be trapped at once
+			      \item There are multiple different kinds of states used as the two state system
+		      \end{itemize}
+		\item Nonetheless, a large portion of trapped ion dynamics can be described with what we have learned in this class!
+
+	\end{itemize}
+\end{frame}
+
+\begin{frame}[allowframebreaks]
+	\nocite{*}
+	\printbibliography
+\end{frame}
+
+\begin{frame}
+	\centering
+	\Huge{Questions?}
 \end{frame}
 
 \end{document}
